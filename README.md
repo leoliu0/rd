@@ -9,19 +9,19 @@ cargo install rd
 # usage
 
 ```bash
-red "replace" "with" -f file.txt
+rd "replace" "with" -f file.txt
 ```
 
 replace inplace by
 
 ```bash
-red "replace" "with" -f file.txt -i
+rd "replace" "with" -f file.txt -i
 ```
 
 delete matching lines
 
 ```bash
-red "to_delete" -f file.txt
+rd "to_delete" -f file.txt
 ```
 performance
 
