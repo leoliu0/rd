@@ -198,7 +198,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "red"
+name = "rd"
 version = "0.1.0"
 dependencies = [
  "anyhow",
