@@ -1,24 +1,29 @@
-# red
-Very simple utility to replace/delete (rd) strings in text files
+# rd
+Very simple utility to replace(r)/delete(d) strings in text files
 
-# installation
+## installation
 ```bash
 cargo install rd
 ```
 
-# usage
+## usage
 
 ```bash
 rd "replace" "with" -f file.txt
 ```
+by default, it uses regex, for string literals
 
-replace inplace by
+```bash
+rd -s "replace" "with" -f file.txt
+```
+
+### replace inplace by
 
 ```bash
 rd "replace" "with" -f file.txt -i
 ```
 
-delete matching lines
+### delete matching lines
 
 ```bash
 rd "to_delete" -f file.txt
