@@ -23,6 +23,6 @@ delete matching lines
 ```bash
 rd "to_delete" -f file.txt
 ```
-performance
+## performance
 
-Much faster than GNU sed, but slower than sd
+Much faster than GNU sed (2x), but slower than sd (2x) for large files. Similar to sd for small files
