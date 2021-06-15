@@ -2,9 +2,9 @@
 Very simple utility to replace strings in text files
 
 # installation
-
-glone this repo and cd to it
-cargo install --path .
+```bash
+cargo install rd
+```
 
 # usage
 
@@ -23,3 +23,6 @@ delete matching lines
 ```bash
 red "to_delete" -f file.txt
 ```
+performance
+
+Much faster than GNU sed, but slower than sd
