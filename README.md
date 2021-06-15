@@ -1,5 +1,5 @@
 # red
-Very simple utility to replace strings in text files
+Very simple utility to replace/delete (rd) strings in text files
 
 # installation
 ```bash
