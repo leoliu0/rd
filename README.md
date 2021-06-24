@@ -26,7 +26,7 @@ rd "replace" "with" -f file.txt -i
 ### delete matching lines
 
 ```bash
-rd "to_delete" -f file.txt
+rd "to_delete" -f file.txt -d
 ```
 ## performance
 
