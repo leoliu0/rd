@@ -4,6 +4,12 @@ use regex::Regex;
 use std::io::prelude::*;
 use std::*;
 
+#[derive(Debug)]
+pub enum Changed {
+    Yes,
+    No,
+}
+
 pub fn reader(path: &path::PathBuf) -> io::BufReader<fs::File> {
     let f = fs::File::open(path)
         .with_context(|| format!("Could not read file {:?}", path))
@@ -12,27 +18,50 @@ pub fn reader(path: &path::PathBuf) -> io::BufReader<fs::File> {
     return f;
 }
 
-pub fn replace_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) {
+pub fn replace_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) -> Changed {
     let f = reader(file);
     let with = args.with.as_ref().unwrap();
+    let get_changed = |line: &str, replace_to: &str| {
+        if line == replace_to {
+            return Changed::No;
+        } else {
+            return Changed::Yes;
+        }
+    };
+    let mut changed = Changed::No;
     if args.stringliteral {
         for line in f.lines() {
-            writeln!(writer, "{}", &line.unwrap().replace(&args.replace, with))
+            let line = &line.unwrap();
+            let replace_to = line.replace(&args.replace, with);
+            changed = match changed {
+                Changed::No => get_changed(line, &replace_to),
+                _ => Changed::Yes,
+            };
+            writeln!(writer, "{}", replace_to)
                 .with_context(|| format!("cannot write line"))
                 .unwrap();
         }
     } else {
         let replace = Regex::new(&args.replace).unwrap();
         for line in f.lines() {
-            writeln!(writer, "{}", replace.replace_all(&line.unwrap(), with))
+            let line = &line.unwrap();
+            let replace_to = replace.replace_all(line, with);
+            changed = match changed {
+                Changed::No => get_changed(line, &replace_to),
+                _ => Changed::Yes,
+            };
+            writeln!(writer, "{}", replace_to)
                 .with_context(|| format!("cannot write line"))
                 .unwrap();
         }
     }
+    println!("{:?}", changed);
+    changed
 }
 
-pub fn delete_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) {
+pub fn delete_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) -> Changed {
     let f = reader(&file);
+    let mut changed = Changed::No;
     if args.stringliteral {
         for line in f.lines() {
             let l = line.with_context(|| format!("cannot read line")).unwrap();
@@ -40,6 +69,8 @@ pub fn delete_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Wri
                 writeln!(writer, "{}", l)
                     .with_context(|| format!("cannot write lines"))
                     .unwrap();
+            } else {
+                changed = Changed::Yes;
             }
         }
     } else {
@@ -50,9 +81,12 @@ pub fn delete_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Wri
                 writeln!(writer, "{}", l)
                     .with_context(|| format!("cannot write lines"))
                     .unwrap();
+            } else {
+                changed = Changed::Yes;
             }
         }
     }
+    changed
 }
 
 // #[test]
