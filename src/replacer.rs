@@ -14,8 +14,7 @@ pub fn reader(path: &path::PathBuf) -> io::BufReader<fs::File> {
     let f = fs::File::open(path)
         .with_context(|| format!("Could not read file {:?}", path))
         .unwrap();
-    let f = io::BufReader::new(f);
-    return f;
+    io::BufReader::new(f)
 }
 
 pub fn replace_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) -> Changed {
@@ -55,7 +54,6 @@ pub fn replace_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Wr
                 .unwrap();
         }
     }
-    println!("{:?}", changed);
     changed
 }
 
