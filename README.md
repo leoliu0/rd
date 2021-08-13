@@ -22,6 +22,10 @@ rd -s "replace" "with" -f file.txt
 ```bash
 rd "replace" "with" -f file.txt -i
 ```
+### adding lines
+```bash
+rd "to_add" -f file.txt -a 1 # line number to add
+```
 
 ### delete matching lines
 
