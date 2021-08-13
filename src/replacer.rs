@@ -87,6 +87,32 @@ pub fn delete_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Wri
     changed
 }
 
+pub fn add(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) -> Changed {
+    let f = reader(&file);
+    let mut changed = Changed::No;
+    for (i, line) in f.lines().enumerate() {
+        let l = line.with_context(|| format!("cannot read line")).unwrap();
+        if i as i32 == args.add {
+            writeln!(writer, "{}", &args.replace)
+                .with_context(|| format!("cannot write lines"))
+                .unwrap();
+            changed = Changed::Yes;
+        }
+        writeln!(writer, "{}", l)
+            .with_context(|| format!("cannot write lines"))
+            .unwrap();
+    }
+    match changed {
+        Changed::Yes => (),
+        Changed::No => {
+            writeln!(writer, "{}", &args.replace)
+                .with_context(|| format!("cannot write lines"))
+                .unwrap();
+        },
+    }
+    changed
+}
+
 // #[test]
 // fn find_a_re_match() {
 // let mut results = Vec::new();
