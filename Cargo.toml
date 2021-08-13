@@ -1,6 +1,6 @@
 [package]
 name = "rd"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Leo Liu <auleo.liu@gmail.com>"]
 edition = "2018"
 description = "simple utils to replace and delete text in text files"
