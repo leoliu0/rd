@@ -20,6 +20,7 @@ pub fn reader(path: &path::PathBuf) -> io::BufReader<fs::File> {
 pub fn replace_matches(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) -> Changed {
     let f = reader(file);
     let with = args.with.as_ref().unwrap();
+    // let with = args.with.unwrap();
     let get_changed = |line: &str, replace_to: &str| {
         if line == replace_to {
             return Changed::No;
@@ -92,7 +93,7 @@ pub fn add(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) -> Chan
     let mut changed = Changed::No;
     for (i, line) in f.lines().enumerate() {
         let l = line.with_context(|| format!("cannot read line")).unwrap();
-        if i as i32 == args.add {
+        if i as i32 == args.add.unwrap() {
             writeln!(writer, "{}", &args.replace)
                 .with_context(|| format!("cannot write lines"))
                 .unwrap();
@@ -108,7 +109,7 @@ pub fn add(args: &Opt, file: &path::PathBuf, mut writer: impl io::Write) -> Chan
             writeln!(writer, "{}", &args.replace)
                 .with_context(|| format!("cannot write lines"))
                 .unwrap();
-        },
+        }
     }
     changed
 }

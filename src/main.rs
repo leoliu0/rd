@@ -8,6 +8,9 @@ use tempfile::NamedTempFile;
 
 #[derive(Debug, StructOpt)]
 pub struct Opt {
+    #[structopt(long)]
+    pub debug: bool,
+
     #[structopt(required(true))]
     pub replace: String,
 
@@ -20,16 +23,17 @@ pub struct Opt {
     #[structopt(short, long)]
     pub delete: bool,
 
-    #[structopt(short, long, conflicts_with("delete"), conflicts_with("with"),required(false))]
-    pub add: i32,
+    #[structopt(short, long, conflicts_with("delete"), conflicts_with("with"))]
+    pub add: Option<i32>,
 
     #[structopt(short, long)]
     pub stringliteral: bool,
 
-    #[structopt(short, long, parse(from_os_str))]
+    #[structopt(short, long, parse(from_os_str), required(true))]
     pub files: Vec<path::PathBuf>,
 }
 
+#[derive(Debug)]
 pub enum Job {
     Replace,
     Delete,
@@ -41,17 +45,18 @@ fn main() {
     let args = Opt::from_args();
     let job = match args.delete {
         true => Job::Delete,
-            false => match args.add {
-                i if i>=0 => Job::Add,
-                _ => Job::Replace,
-            }
-    }; 
+        false => match args.add {
+            i if i.is_some() => Job::Add,
+            _ => Job::Replace,
+        },
+    };
     for file in args.files.iter() {
         process_file(&args, &file, &job)
     }
 }
 
-fn process_file(args: &Opt, file: &path::PathBuf, job:&Job) {
+fn process_file(args: &Opt, file: &path::PathBuf, job: &Job) {
+    debug_assert!(&args.debug, "the job is {:?}", job);
     if !file.is_file() {
         return;
     }
@@ -90,6 +95,6 @@ fn process_file(args: &Opt, file: &path::PathBuf, job:&Job) {
             &Job::Add => {
                 replacer::add(args, file, io::stdout());
             }
-    }
+        }
     }
 }
